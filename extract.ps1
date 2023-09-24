@@ -1,8 +1,8 @@
-# Définir le chemin du répertoire de destination sur votre ordinateur où vous souhaitez copier les fichiers.
+# Définir le répertoire de destination actuel (le répertoire depuis lequel le script est exécuté).
 $destinationDirectory = "."
 
-# Exécuter la commande ADB pour lister tous les fichiers vidéo et image sur votre téléphone.
-$files = & adb shell "find /sdcard/ -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.mp4' -o -iname '*.mov' -o -iname '*.mkv' -o -iname '*.gif' -o -iname '*.avi' \)"
+# Exécuter la commande ADB pour lister tous les fichiers vidéo et image sur votre téléphone, y compris les nouvelles extensions ajoutées.
+$files = & adb shell "find /sdcard/ -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.mp4' -o -iname '*.mov' -o -iname '*.mkv' -o -iname '*.gif' -o -iname '*.avi' -o -iname '*.webp' -o -iname '*.dng' \)"
 
 # Convertir la sortie en un tableau de chaînes.
 $filesArray = $files -split [Environment]::NewLine
@@ -15,10 +15,10 @@ foreach ($file in $filesArray) {
     # Extraire le nom du fichier à partir du chemin complet.
     $fileName = [System.IO.Path]::GetFileName($filePathOnPhone)
 
-    # Construire le chemin complet de destination sur l'ordinateur en utilisant une conversion UTF-8.
+    # Construire le chemin complet de destination en utilisant le répertoire actuel.
     $destinationPath = Join-Path -Path $destinationDirectory -ChildPath $fileName
 
-    # Exécuter la commande ADB pour copier le fichier sur l'ordinateur en utilisant le chemin UTF-8.
+    # Exécuter la commande ADB pour copier le fichier sur l'ordinateur.
     & adb pull "$filePathOnPhone" "$destinationPath"
 
     # Vérifier si la commande de copie a réussi (exit code 0).
